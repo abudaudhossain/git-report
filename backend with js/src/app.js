@@ -41,16 +41,26 @@ mongoDB(); // Connect to MongoDB
 // API version 1 routes
 app.use("/api/v1", apiV1); // Use API v1 routes for /api/v1 path
 
+app.post("/webhooks",(req, res, next)=>{
+  try {
+    console.log(req.body, req.params)
+    
+    res.send("ok")
+  } catch (error) {
+    next(error)
+  }
+})
+
 var privateKey = fs.readFileSync(
   "./src/git-repo-report.2024-12-21.private-key.pem"
 );
-const currentTimestamp = Math.floor(Date.now() / 1000);
-var token = jwt.sign({
-  "iss": "Iv23licc2XzMwed367Xv",
-  "exp":  currentTimestamp + 10 * 60,
-  "iat": currentTimestamp
-}, privateKey, { algorithm: "RS256" });
+// const currentTimestamp = Math.floor(Date.now() / 1000);
+// var token = jwt.sign({
+//   "iss": "Iv23licc2XzMwed367Xv",
+//   "exp":  currentTimestamp + 10 * 60,
+//   "iat": currentTimestamp
+// }, privateKey, { algorithm: "RS256" });
 
-console.log(token)
+// console.log(token)
 
 export default app; // Export the app instance

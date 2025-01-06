@@ -1,4 +1,5 @@
 import axios from "axios";
+import { userDB } from "../services/db/userDB.js";
 
 const fetchAccessToken = async (code) => {
   console.log(code);
@@ -33,14 +34,29 @@ class AuthController {
   }
 
   // Handle GitHub OAuth callback and redirect to profile page
-  authCallback(req, res) {
+  async authCallback(req, res, next) {
     try {
       const code = req.query.code;
-    
-      res.send(req.user);
+      console.log(req.user);
+      let { id, nodeId, displayName, username, provider, _json } = req.user;
+      let { avatar_url, bio } = _json;
+      let existUser = await userDB.findOne({ username: username });
+      if (!existUser) {
+        existUser = await userDB.create({
+          githubId: id,
+          githubNodeId: nodeId,
+          name: displayName,
+          username,
+          provider,
+          avatar: avatar_url,
+          bio,
+        });
+      }
+
+      res.json(existUser);
     } catch (error) {
       console.log(error);
-      res.send("ik");
+      res.send(error.message);
     }
   }
 
@@ -48,6 +64,24 @@ class AuthController {
     res.redirect(
       `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo`
     );
+  }
+
+  // Handle Login
+  loginWithPassword(req, res, next) {
+    try {
+      res.send("Login with password");
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Handle Signup
+  signupHandler(req, res, next) {
+    try {
+      res.send("Sign up");
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

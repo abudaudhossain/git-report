@@ -2,29 +2,41 @@ import mongoose from "mongoose";
 
 // Define the schema fields
 const field = {
+  githubId: {
+    type: String,
+    default: null,
+  },
+  githubNodeId: {
+    type: String,
+    default: null,
+  },
   name: {
     type: String,
     default: null, // Default value if not provided
   },
   email: {
     type: String,
-    default: null, // Default value if not provided
+    default: null,
   },
   phone: {
     type: String,
-    required: true, // This field is required
+    default: null,
+  },
+  bio: {
+    type: String,
+    default: null,
   },
   password: {
     type: String,
-    required: true, // This field is required
   },
   avatar: {
     type: String,
-    default: null, // Default value if not provided
+    default: null,
   },
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   accessToken: {
     type: String,
@@ -36,7 +48,7 @@ const field = {
       values: ["admin", "user"], // Allowed values
       message: "User role value can't be {VALUE}, must be admin / user", // Custom error message for invalid values
     },
-    default: "employee", // Default value if not provided
+    default: "user", // Default value if not provided
   },
 
   status: {

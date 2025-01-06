@@ -1,128 +1,117 @@
-import User from "../models/userModel.js"
+import ValidationError from "../../../../exceptions/ValidationError.js";
+import Model from "../../models/user.model.js";
 
 export const userDB = {
-    // Create a new user
-    create: async (data) => {
-        /**
-         * @param {Object} data - The user data to be created.
-         * @returns {Object|null} - The created user document or null if an error occurs.
-         */
-        try {
-            const result = await User.create(data);
-            return result;
-        } catch (error) {
-            console.log(error);
-            console.log(error._message);
-            return null;
+  // Create a new document
+  create: async (data) => {
+    try {
+      const result = await Model.create(data);
+      return result;
+    } catch (error) {
+      console.log(error);
+      if (error.code === 11000 && error.keyPattern && error.keyPattern.name) {
+        // Custom error message for duplicate role name
+        throw new ValidationError(
+          `Document with the name '${error.keyValue.name}' already exists. Please use a different name.`
+        );
+      } else {
+        let err = error?.errors[Object.keys(error?.errors)[0]];
+        if (
+          err?.name === "CastError" &&
+          (err?.kind === "ObjectId" || err.kind == "[ObjectId]") &&
+          err
+        ) {
+          throw new ValidationError(
+            "Invalid Id format. Please provide a valid ObjectId for the " +
+              err.path +
+              " field."
+          );
+        } else if (err.name === "CastError" && err.kind === "date") {
+          throw new ValidationError(
+            "Invalid date format. Please provide a valid date for " + err.path
+          );
         }
-    },
-    // Find a single user by query
-    find: async (query, filter = {}) => {
-        /**
-         * @param {Object} query - The query object to find the user.
-         * @param {Object} [filter={}] - The fields to include or exclude.
-         * @returns {Object|null} - The found user document or null if an error occurs.
-         */
-        try {
-            const result = await User.findOne(query, filter);
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-    // Find multiple users by query
-    finds: async (query, filter = {}, startIndex = null, limit = null, sort = {}) => {
-        /**
-         * @param {Object} query - The query object to find the users.
-         * @param {Object} [filter={}] - The fields to include or exclude.
-         * @param {number|null} [startIndex=null] - The starting index for pagination.
-         * @param {number|null} [limit=null] - The maximum number of documents to return.
-         * @param {Object} [sort={}] - The sorting criteria.
-         * @returns {Array|null} - The found user documents or null if an error occurs.
-         */
-        try {
-            const result = await User.find(query, filter).skip(startIndex).limit(limit).sort(sort);
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-    // Count the total number of users matching the query
-    totalCount: async (query) => {
-        /**
-         * @param {Object} query - The query object to count the users.
-         * @returns {number|null} - The total count of matching documents or null if an error occurs.
-         */
-        try {
-            const result = await User.find(query).count();
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-    // Update a single user by query
-    update: async (query, updateData) => {
-        /**
-         * @param {Object} query - The query object to find the user.
-         * @param {Object} updateData - The data to update the user with.
-         * @returns {Object|null} - The updated user document or null if an error occurs.
-         */
-        try {
-            const result = await User.findOneAndUpdate(
-                query,
-                updateData,
-                { new: true }
-            );
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-    // Get detailed information of a single user
-    details: async (query) => {
-        /**
-         * @param {Object} query - The query object to find the user.
-         * @returns {Object|null} - The user document with populated fields or null if an error occurs.
-         */
-        try {
-            const result = await User.findOne(query).populate("area", ['name']);
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-    // Delete a single user by query
-    deleteOne: async (query) => {
-        /**
-         * @param {Object} query - The query object to find the user.
-         * @returns {Object|null} - The result of the deletion or null if an error occurs.
-         */
-        try {
-            const result = await User.deleteOne(query);
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-    // Delete multiple users by query
-    deleteMany: async (query) => {
-        /**
-         * @param {Object} query - The query object to find the users.
-         * @returns {Object|null} - The result of the deletion or null if an error occurs.
-         */
-        try {
-            const result = await User.deleteMany(query);
-            console.log("Deleted items:", result);
-            return result;
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    },
-}
+
+        throw new ValidationError(error.message);
+      }
+    }
+  },
+  // Find a single document by query
+  find: async (query, filter = {}) => {
+    const result = await Model.findOne(query, filter);
+    return result;
+  },
+
+  // Update a single document by query
+  update: async (query, updateData) => {
+    try {
+      const result = await Model.findOneAndUpdate(query, updateData, {
+        new: true,
+      });
+
+      return result;
+    } catch (error) {
+      if (error.code === 11000 && error.keyPattern && error.keyPattern.name) {
+        // Custom error message for duplicate document name
+        throw new ValidationError(
+          `Document with the name '${error.keyValue.name}' already exists. Please use a different name.`
+        );
+      } else if (error.name === "CastError" && error.kind === "date") {
+        let field = error.path.split(".")[1]
+          ? error.path.split(".")[1]
+          : error.path.split(".")[0];
+        throw new ValidationError(
+          "Invalid date format. Please provide a valid date for " + field
+        );
+      } else if (
+        error?.name === "CastError" &&
+        (error?.kind === "ObjectId" || error.kind == "[ObjectId]") &&
+        error
+      ) {
+        throw new ValidationError(
+          "Invalid Id format. Please provide a valid ObjectId for the " +
+            error.path +
+            " field."
+        );
+      } else {
+        throw new ValidationError(error.message);
+      }
+    }
+  },
+  finds: async (
+    query,
+    filter = {},
+    startIndex = null,
+    limit = null,
+    sort = {}
+  ) => {
+    console.log(query);
+    const result = await Model.find(query, filter)
+      .skip(startIndex)
+      .limit(limit)
+      .sort(sort);
+    return result;
+  },
+  // Count the total number of documents matching the query
+  totalCount: async (query) => {
+    const result = await Model.countDocuments(query);
+    return result;
+  },
+
+  // Delete a single document by query
+  deleteOne: async (query) => {
+    const result = await Model.deleteOne(query);
+    return result;
+  },
+  // Delete multiple documents by query
+  deleteMany: async (query) => {
+    const result = await Model.deleteMany(query);
+    console.log("Deleted items:", result);
+    return result;
+  },
+
+  findOne: async (query, filter = {}) => {
+    const result = await Model.findOne(query, filter);
+    return result;
+  },
+};
