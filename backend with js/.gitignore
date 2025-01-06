@@ -1,0 +1,4 @@
+node_modules
+.env
+storages/*
+git-repo-report.2024-12-21.private-key.pem
