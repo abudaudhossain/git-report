@@ -10,6 +10,14 @@ const field = {
     type: String,
     default: null,
   },
+  installationId: {
+    type: String,
+    default: null,
+  },
+  clientId: {
+    type: String,
+    default: null,
+  },
   name: {
     type: String,
     default: null, // Default value if not provided

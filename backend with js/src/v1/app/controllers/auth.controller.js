@@ -1,5 +1,6 @@
 import axios from "axios";
 import { userDB } from "../services/db/userDB.js";
+import { getAccessToken } from "../helpers/utility.js";
 
 const fetchAccessToken = async (code) => {
   console.log(code);
@@ -37,8 +38,10 @@ class AuthController {
   async authCallback(req, res, next) {
     try {
       const code = req.query.code;
-      console.log(req.user);
+
       let { id, nodeId, displayName, username, provider, _json } = req.user;
+      const accessToken = getAccessToken({ name: displayName, username });
+      console.log("access token: ", accessToken);
       let { avatar_url, bio } = _json;
       let existUser = await userDB.findOne({ username: username });
       if (!existUser) {
@@ -50,10 +53,22 @@ class AuthController {
           provider,
           avatar: avatar_url,
           bio,
+          accessToken,
         });
+      } else {
+        let updateUserResult = await userDB.update(
+          { username: username },
+          {
+            accessToken: accessToken,
+          }
+        );
+        console.log(updateUserResult);
       }
 
-      res.json(existUser);
+      res.json({
+        ...existUser._doc,
+        accessToken,
+      });
     } catch (error) {
       console.log(error);
       res.send(error.message);

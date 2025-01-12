@@ -18,6 +18,7 @@ import apiV1 from "./v1/api.js"; // Import API version 1 routes
 import mongoDB from "./config/mongoDB.js"; // Import MongoDB connection configuration
 import sessionConfig from "./config/session.js";
 import passport from "./config/passport.js";
+import { getGithubAccessToken } from "./utils/helpers.js";
 
 // Middleware setup
 app.use(sessionConfig);
@@ -51,16 +52,5 @@ app.post("/webhooks",(req, res, next)=>{
   }
 })
 
-var privateKey = fs.readFileSync(
-  "./src/git-repo-report.2024-12-21.private-key.pem"
-);
-// const currentTimestamp = Math.floor(Date.now() / 1000);
-// var token = jwt.sign({
-//   "iss": "Iv23licc2XzMwed367Xv",
-//   "exp":  currentTimestamp + 10 * 60,
-//   "iat": currentTimestamp
-// }, privateKey, { algorithm: "RS256" });
-
-// console.log(token)
 
 export default app; // Export the app instance
