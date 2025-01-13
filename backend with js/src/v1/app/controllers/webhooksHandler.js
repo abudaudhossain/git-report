@@ -1,11 +1,12 @@
 import { userDB } from "../services/db/userDB.js";
-import { addRepositories } from "../services/repositories/add.repositories.js";
+import {
+  addRepositories,
+  removedRepositories,
+} from "../services/repositories/add.repositories.js";
 
 const webhooksHandler = async (body) => {
   try {
-    // console.log(body);
     if (body.action == "created") {
-      
       let result = await userDB.update(
         {
           githubId: body.installation.account.id.toString(),
@@ -24,12 +25,21 @@ const webhooksHandler = async (body) => {
           avatar: body.installation.account.avatar_url,
         });
       }
-      console.log("user : " , result)
-
       addRepositories(body.repositories, {
         id: body.installation.account.id,
         senderId: body.sender.id,
       });
+    } else if (body.action == "added") {
+      let result = await addRepositories(body.repositories_added, {
+        id: body.installation.account.id,
+        senderId: body.sender.id,
+      });
+    } else if (body.action == "removed") {
+      removedRepositories(body.repositories_removed);
+    } else if (body.action == "deleted") {
+      removedRepositories(body.repositories);
+    } else {
+      console.log("else", body);
     }
   } catch (error) {
     console.log(error);

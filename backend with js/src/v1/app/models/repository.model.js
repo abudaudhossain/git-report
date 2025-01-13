@@ -52,6 +52,10 @@ const field = {
     type: String,
     required: true,
   },
+  selected: {
+    type: Boolean,
+    default: true,
+  },
 };
 
 const repositorySchema = mongoose.Schema(field, { timestamps: true });

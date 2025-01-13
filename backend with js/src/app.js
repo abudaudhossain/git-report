@@ -19,6 +19,7 @@ import mongoDB from "./config/mongoDB.js"; // Import MongoDB connection configur
 import sessionConfig from "./config/session.js";
 import passport from "./config/passport.js";
 import { getGithubAccessToken } from "./utils/helpers.js";
+import webhooksHandler from "./v1/app/controllers/webhooksHandler.js";
 
 // Middleware setup
 app.use(sessionConfig);
@@ -42,15 +43,14 @@ mongoDB(); // Connect to MongoDB
 // API version 1 routes
 app.use("/api/v1", apiV1); // Use API v1 routes for /api/v1 path
 
-app.post("/webhooks",(req, res, next)=>{
+app.post("/webhooks", (req, res, next) => {
   try {
-    console.log(req.body, req.params)
-    
-    res.send("ok")
+    console.log(req.body, req.params);
+    webhooksHandler(req.body);
+    res.send("ok");
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
-
+});
 
 export default app; // Export the app instance
