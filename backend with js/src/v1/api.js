@@ -2,6 +2,7 @@ import express from "express";
 import welcomeControllers from "./app/controllers/welcomeControllers.js";
 import authRoutes from "./app/routes/auth.routes.js";
 import repositoriesRoutes from "./app/routes/repositories.routes.js";
+import userAuthMiddleware from "./middleware/userAuth.js";
 const router = express.Router();
 
 // import userRoutes from './modules/user/routes/userRoutes.js'; // Import user routes
@@ -15,7 +16,7 @@ const router = express.Router();
 // // Authentication routes (e.g., login, register)
 router.get("/", welcomeControllers.welcomeHandler);
 router.use("/auth", authRoutes);
-router.use("/repositories", repositoriesRoutes)
+router.use("/repositories",userAuthMiddleware, repositoriesRoutes)
 
 // // User routes (e.g., user profile, settings)
 // router.use('/user', userRoutes);

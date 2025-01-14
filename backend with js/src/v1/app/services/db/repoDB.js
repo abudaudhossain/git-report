@@ -67,7 +67,7 @@ export const repositoryDB = {
   // Update a single document by query
   update: async (query, updateData) => {
     try {
-        // console.log(query, updateData);
+       
       const result = await Model.findOneAndUpdate(query, updateData, {
         new: true,
       });

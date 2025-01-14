@@ -18,7 +18,6 @@ import apiV1 from "./v1/api.js"; // Import API version 1 routes
 import mongoDB from "./config/mongoDB.js"; // Import MongoDB connection configuration
 import sessionConfig from "./config/session.js";
 import passport from "./config/passport.js";
-import { getGithubAccessToken } from "./utils/helpers.js";
 import webhooksHandler from "./v1/app/controllers/webhooksHandler.js";
 
 // Middleware setup

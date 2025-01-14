@@ -8,6 +8,7 @@ export const addRepositories = async (repositories, owner) => {
         githubId: repo.id,
         githubNodeId: repo.node_id,
         name: repo.name,
+        fullName: repo.full_name,
         private: repo.private,
         senderId: owner.senderId,
         owner: owner.id,

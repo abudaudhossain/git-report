@@ -24,7 +24,7 @@ export const getFilter = (fields) => {
   return filter;
 };
 
-export const getGithubAccessToken = () => {
+export const getGithubAppAccessToken = () => {
   try {
     var privateKey = fs.readFileSync(
       "./git-repo-report.2024-12-21.private-key.pem"
@@ -40,10 +40,9 @@ export const getGithubAccessToken = () => {
       { algorithm: "RS256" }
     );
 
-    console.log(token);
-
     return token;
   } catch (error) {
-    console.log(error);
+    console.error(`${error.message}\n${error.stack}`);
+    throw new Error(error.message);
   }
 };

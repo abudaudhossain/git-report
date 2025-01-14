@@ -1,4 +1,6 @@
+import { getGithubAppAccessToken } from "./src/utils/helpers.js";
 import webhooksHandler from "./src/v1/app/controllers/webhooksHandler.js";
+import { getAPI, postAPI } from "./src/v1/app/services/api/axios.js";
 
 let uninstall = {
   action: "deleted",
@@ -383,3 +385,20 @@ let removeRepo = {
 };
 
 // webhooksHandler(selectedRepo);
+console.log("testing");
+let test = async () => {
+  //  let t =getGithubAppAccessToken();
+  // let result = await postAPI(
+  //   "app/installations/59473321/access_tokens",
+  //   { test: "test" },
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${t}`,
+  //     },
+  //   }
+  // );
+  // console.log(result);
+  console.log("test end");
+};
+
+test();
