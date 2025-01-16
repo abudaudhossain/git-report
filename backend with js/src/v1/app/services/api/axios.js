@@ -7,22 +7,17 @@ export const instance = axios.create({
     "X-Custom-Header-Name": "by me",
   },
 });
-const cookiesGet = (name) => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-};
 
 instance.interceptors.request.use(
   (config) => {
     try {
-        console.log("Intercepting request...");
-        config.headers["X-interceptor-header"] = "interception";
+      // console.log("Intercepting request...");
+      // config.headers["X-interceptor-header"] = "interception";
 
-        console.log("Interceptor Config:", config);
-        console.log(
-            "======================================== End request interceptor ============================="
-        );
+      // console.log("Interceptor Config:", config);
+      // console.log(
+      //     "======================================== End request interceptor ============================="
+      // );
 
       return config;
     } catch (error) {
@@ -59,9 +54,9 @@ instance.interceptors.response.use(
   }
 );
 
-export const getAPI = async (endPoint) => {
+export const getAPI = async (endPoint, config = {}) => {
   try {
-    let response = await instance.get(endPoint);
+    let response = await instance.get(endPoint, config);
     return {
       isSuccess: true,
       message: "Successful",
@@ -87,6 +82,7 @@ export const getAPI = async (endPoint) => {
 
 export const postAPI = async (endPoint, data, config) => {
   try {
+   
     let response = await instance.post(endPoint, data, config);
     return {
       isSuccess: true,

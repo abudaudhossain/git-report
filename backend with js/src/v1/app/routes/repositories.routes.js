@@ -7,5 +7,6 @@ repositoriesRoutes.get(
   "/selected",
   repositoriesController.selectedRepositoriesHandler
 );
+repositoriesRoutes.get("/report-generated/:name", repositoriesController.generatedReportHandler);
 
 export default repositoriesRoutes;
