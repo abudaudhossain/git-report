@@ -1,17 +1,29 @@
 import { randomBytes } from "crypto";
 import jwt from "jsonwebtoken";
+import ValidationError from "../../../exceptions/ValidationError.js";
 
-export const getAccessToken =(data)=>{
-    return jwt.sign(data, process.env.JWT_KEY, { expiresIn: "30 days" });
-}
+export const getAccessToken = (data) => {
+  return jwt.sign(data, process.env.JWT_KEY, { expiresIn: "30 days" });
+};
 
-
-
-
-
-
-
-
+export const getDate = (data) => {
+  try {
+    let date = new Date(data);
+    const timeZone = process.env.TZ || "Asia/Dhaka";
+    const options = {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    return new Intl.DateTimeFormat("en-US", options)
+      .format(date)
+      .replace(/\//g, "-");
+  } catch (error) {
+    console.log(`${error.message}\n${error.stack}`);
+    throw new ValidationError(error.message);
+  }
+};
 
 // const getOTP = () => {
 //     return "213200";

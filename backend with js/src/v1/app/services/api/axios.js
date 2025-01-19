@@ -14,7 +14,7 @@ instance.interceptors.request.use(
       // console.log("Intercepting request...");
       // config.headers["X-interceptor-header"] = "interception";
 
-      // console.log("Interceptor Config:", config);
+      // console.log("Interceptor Config:", config.headers);
       // console.log(
       //     "======================================== End request interceptor ============================="
       // );
@@ -64,7 +64,7 @@ export const getAPI = async (endPoint, config = {}) => {
     };
   } catch (error) {
     console.error(
-      `code: ${error.code} ${error.message}\n${
+      `end point - (get): ${endPoint}\ncode: ${error.code} ${error.message}\n${
         error?.response?.data && JSON.stringify(error.response.data)
       }\n${error.stack}`
     );
@@ -82,7 +82,6 @@ export const getAPI = async (endPoint, config = {}) => {
 
 export const postAPI = async (endPoint, data, config) => {
   try {
-   
     let response = await instance.post(endPoint, data, config);
     return {
       isSuccess: true,
