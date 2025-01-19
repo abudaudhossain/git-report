@@ -20,38 +20,38 @@ export default function AnalyticEcommerce({ color = 'primary', title, count, per
   return (
     <MainCard contentSX={{ p: 2.25 }}>
       <Stack spacing={0.5}>
-        <Typography variant="h6" color="text.secondary">
-          {title}
-        </Typography>
-        <Grid container alignItems="center">
+
+        <Grid item xs={12} sm container spacing={1}>
+          <Grid item xs container direction="column" spacing={2}>
+            <Grid item xs>
+              <Typography gutterBottom variant="subtitle1" component="div">
+                Standard license nh jh h jk jh k jhkj dfg sdf sdfgdf fdg
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                Full resolution 1920x1080 • JPEG
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                ID: 1030114
+              </Typography>
+            </Grid>
+
+          </Grid>
           <Grid item>
-            <Typography variant="h4" color="inherit">
-              {count}
+            <Chip
+              variant="combined"
+              color={color}
+              icon={<RiseOutlined style={iconSX} />}
+              label={`Report`}
+              sx={{ ml: 1.25, pl: 1 }}
+              size="small"
+            />
+            <Typography variant="subtitle1" component="div">
+              $19.00
             </Typography>
           </Grid>
-          {percentage && (
-            <Grid item>
-              <Chip
-                variant="combined"
-                color={color}
-                icon={isLoss ? <FallOutlined style={iconSX} /> : <RiseOutlined style={iconSX} />}
-                label={`${percentage}%`}
-                sx={{ ml: 1.25, pl: 1 }}
-                size="small"
-              />
-            </Grid>
-          )}
         </Grid>
       </Stack>
-      <Box sx={{ pt: 2.25 }}>
-        <Typography variant="caption" color="text.secondary">
-          You made an extra{' '}
-          <Typography variant="caption" sx={{ color: `${color || 'primary'}.main` }}>
-            {extra}
-          </Typography>{' '}
-          this year
-        </Typography>
-      </Box>
+
     </MainCard>
   );
 }
