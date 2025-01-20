@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Google from 'assets/images/icons/google.svg';
 import Twitter from 'assets/images/icons/twitter.svg';
 import Facebook from 'assets/images/icons/facebook.svg';
+import { getAPI } from 'api/axios.js';
 
 // ==============================|| FIREBASE - SOCIAL BUTTON ||============================== //
 
@@ -14,7 +15,11 @@ export default function FirebaseSocial() {
 
   // @ts-ignore
   const googleHandler = async () => {
-    // login || singup
+    try {
+     window.open("http://localhost:5000/api/v1/auth/github","_self")
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const twitterHandler = async () => {

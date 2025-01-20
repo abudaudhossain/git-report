@@ -37,38 +37,41 @@ class AuthController {
   // Handle GitHub OAuth callback and redirect to profile page
   async authCallback(req, res, next) {
     try {
-      const code = req.query.code;
+      console.log(req.user)
+      if (req.user) {
+        const code = req.query.code;
 
-      let { id, nodeId, displayName, username, provider, _json } = req.user;
-      const accessToken = getAccessToken({ name: displayName, username });
-      console.log("access token: ", accessToken);
-      let { avatar_url, bio } = _json;
-      let existUser = await userDB.findOne({ username: username });
-      if (!existUser) {
-        existUser = await userDB.create({
-          githubId: id,
-          githubNodeId: nodeId,
-          name: displayName,
-          username,
-          provider,
-          avatar: avatar_url,
-          bio,
+        let { id, nodeId, displayName, username, provider, _json } = req.user;
+        const accessToken = getAccessToken({ name: displayName, username });
+        console.log("access token: ", accessToken);
+        let { avatar_url, bio } = _json;
+        let existUser = await userDB.findOne({ username: username });
+        if (!existUser) {
+          existUser = await userDB.create({
+            githubId: id,
+            githubNodeId: nodeId,
+            name: displayName,
+            username,
+            provider,
+            avatar: avatar_url,
+            bio,
+            accessToken,
+          });
+        } else {
+          let updateUserResult = await userDB.update(
+            { username: username },
+            {
+              accessToken: accessToken,
+            }
+          );
+          console.log(updateUserResult);
+        }
+
+        res.json({
+          ...existUser._doc,
           accessToken,
         });
-      } else {
-        let updateUserResult = await userDB.update(
-          { username: username },
-          {
-            accessToken: accessToken,
-          }
-        );
-        console.log(updateUserResult);
       }
-
-      res.json({
-        ...existUser._doc,
-        accessToken,
-      });
     } catch (error) {
       console.log(error);
       res.send(error.message);

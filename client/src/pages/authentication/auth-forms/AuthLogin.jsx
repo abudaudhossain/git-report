@@ -40,8 +40,10 @@ export default function AuthLogin({ isDemo = false }) {
   };
 
   const handleMouseDownPassword = (event) => {
+
     event.preventDefault();
   };
+  console.log(showPassword, checked)
 
   return (
     <>
@@ -55,6 +57,17 @@ export default function AuthLogin({ isDemo = false }) {
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
+        onSubmit={async (value, { setErrors, setSubmitting }) => {
+          try {
+            console.log(value)
+
+            setSubmitting(false)
+          } catch (error) {
+
+            setErrors({ submit: error.message })
+            setSubmitting(false)
+          }
+        }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>

@@ -24,7 +24,13 @@ import webhooksHandler from "./v1/app/controllers/webhooksHandler.js";
 app.use(sessionConfig);
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(express.json({ limit: "500mb" })); // Parse JSON bodies with a size limit
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+); // Enable Cross-Origin Resource Sharing
 app.use(cookieParser()); // Parse cookies
 app.use(passport.initialize());
 app.use(passport.session());

@@ -14,13 +14,13 @@ authRoutes.get(
   "/github/callback",
   passport.authenticate("github", {
     failureRedirect: "/api/v1/auth/github/fail",
-  }),
-  authController.authCallback
+    successRedirect: "http://localhost:3000",
+  })
 );
+authRoutes.get('/success', authController.authCallback)
 
 // auth
 authRoutes.post("/signup", authController.signupHandler);
 authRoutes.post("/login", authController.loginWithPassword);
-
 
 export default authRoutes;
