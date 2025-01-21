@@ -1,6 +1,7 @@
 import axios from "axios";
 import { userDB } from "../services/db/userDB.js";
 import { getAccessToken } from "../helpers/utility.js";
+import ValidationError from "../../../exceptions/ValidationError.js";
 
 const fetchAccessToken = async (code) => {
   console.log(code);
@@ -37,7 +38,7 @@ class AuthController {
   // Handle GitHub OAuth callback and redirect to profile page
   async authCallback(req, res, next) {
     try {
-      console.log(req.user)
+      console.log(req.user);
       if (req.user) {
         const code = req.query.code;
 
@@ -71,10 +72,14 @@ class AuthController {
           ...existUser._doc,
           accessToken,
         });
+        return;
+      } else {
+        throw new ValidationError("User not found");
       }
+      return;
     } catch (error) {
       console.log(error);
-      res.send(error.message);
+      res.status(401).send(error.message);
     }
   }
 

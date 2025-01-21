@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import Grid from '@mui/material/Grid';
@@ -11,10 +13,20 @@ import AuthCard from './AuthCard';
 
 // assets
 import AuthBackground from 'assets/images/auth/AuthBackground';
+import { useStore } from 'contexts/StoreContext';
 
 // ==============================|| AUTHENTICATION - WRAPPER ||============================== //
 
 export default function AuthWrapper({ children }) {
+  const { user } = useStore();
+  const navigate = useNavigate();
+
+  // Redirect to the home page if the user is authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/'); // Adjust the route based on your application's home page path
+    }
+  }, [user, navigate]);
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <AuthBackground />
