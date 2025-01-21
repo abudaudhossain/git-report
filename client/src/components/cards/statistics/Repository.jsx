@@ -12,8 +12,6 @@ import { Link } from 'react-router-dom';
 // project import
 import MainCard from 'components/MainCard';
 
-// assets
-import RiseOutlined from '@ant-design/icons/RiseOutlined';
 
 const iconSX = { fontSize: '0.75rem', color: 'inherit', marginLeft: 0, marginRight: 0 };
 
