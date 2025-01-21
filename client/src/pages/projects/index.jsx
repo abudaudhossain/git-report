@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 
 import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
 import Repository from 'components/cards/statistics/Repository';
+import Loader from 'components/Loader';
 import { useStore } from 'contexts/StoreContext';
 import { useEffect, useState } from 'react';
 import { getRepositories } from 'utils/repositories';
@@ -18,7 +19,7 @@ const Project = () => {
       }
     })
   }, [user])
-  console.log(repositories)
+  if (!repositories.length) return <Loader />
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       {/* row 1 */}
@@ -36,8 +37,6 @@ const Project = () => {
       }
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
-
-
     </Grid>
   )
 }

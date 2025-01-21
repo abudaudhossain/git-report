@@ -29,6 +29,11 @@ import avatar1 from 'assets/images/users/avatar-1.png';
 import avatar2 from 'assets/images/users/avatar-2.png';
 import avatar3 from 'assets/images/users/avatar-3.png';
 import avatar4 from 'assets/images/users/avatar-4.png';
+import { useStore } from 'contexts/StoreContext';
+import { useEffect, useState } from 'react';
+import { getRepositoriesDetails } from 'utils/repositories';
+import Loader from 'components/Loader';
+import { useParams } from 'react-router-dom';
 
 // avatar style
 const avatarSX = {
@@ -50,6 +55,19 @@ const actionSX = {
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 export default function DashboardDefault() {
+  const { user } = useStore()
+  const [repositories, setRepositories] = useState(null)
+  const params = useParams()
+
+  useEffect(() => {
+    getRepositoriesDetails(setRepositories, params.id, {
+      headers: {
+        authorization: `bearer ${user.accessToken}`
+      }
+    })
+  }, [user])
+ 
+  if (!repositories) return <Loader />
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       {/* row 1 */}
@@ -57,16 +75,16 @@ export default function DashboardDefault() {
         <Typography variant="h5">Dashboard</Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Commits" count="4,42,236" percentage={59.3} extra="35,000" />
+        <AnalyticEcommerce title="Total Commits" count={repositories.totalCommits} extra="0" />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Today Total Commits " count="78,250" percentage={70.5} extra="8,900" />
+        <AnalyticEcommerce title="Today Total Commits " count={repositories.todayCommitCount} extra={repositories.todayCommitCount - repositories.yesterdayCommitCount} />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Pull Request" count="18,800" percentage={27.4} isLoss color="warning" extra="1,943" />
+        <AnalyticEcommerce title="Total Pull Request" count={repositories.pullRequestCount} />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Contributors" count="35,078" percentage={27.4} isLoss color="warning" extra="20,395" />
+        <AnalyticEcommerce title="Total Contributors" count={repositories.totalContributors} />
       </Grid>
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
@@ -86,7 +104,7 @@ export default function DashboardDefault() {
           <List sx={{ p: 0, '& .MuiListItemButton-root': { py: 2 } }}>
             <ListItemButton divider>
               <ListItemText primary="Fork" />
-              <Typography variant="h5">45</Typography>
+              <Typography variant="h5">{repositories.forkCount}</Typography>
             </ListItemButton>
             <ListItemButton divider>
               <ListItemText primary="Stars" />
@@ -94,15 +112,19 @@ export default function DashboardDefault() {
             </ListItemButton>
             <ListItemButton>
               <ListItemText primary="Watch" />
-              <Typography variant="h5">30</Typography>
+              <Typography variant="h5">{repositories.watchCount}</Typography>
             </ListItemButton>
             <ListItemButton>
               <ListItemText primary="Issues" />
-              <Typography variant="h5">30</Typography>
+              <Typography variant="h5">{repositories.totalIssues}</Typography>
             </ListItemButton>
             <ListItemButton>
-              <ListItemText primary="Releases" />
-              <Typography variant="h5">30</Typography>
+              <ListItemText primary="Open Issues" />
+              <Typography variant="h5">{repositories.openIssuesCount}</Typography>
+            </ListItemButton>
+            <ListItemButton>
+              <ListItemText primary="Close Issues" />
+              <Typography variant="h5">{repositories.closeIssuesCount}</Typography>
             </ListItemButton>
 
           </List>
