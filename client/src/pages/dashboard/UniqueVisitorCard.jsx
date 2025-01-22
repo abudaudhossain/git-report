@@ -13,9 +13,8 @@ import IncomeAreaChart from './IncomeAreaChart';
 
 // ==============================|| DEFAULT - UNIQUE VISITOR ||============================== //
 
-export default function UniqueVisitorCard() {
-  const [slot, setSlot] = useState('week');
-
+export default function UniqueVisitorCard({ repositories }) {
+  const [slot, setSlot] = useState('15');
   return (
     <>
       <Grid container alignItems="center" justifyContent="space-between">
@@ -26,26 +25,35 @@ export default function UniqueVisitorCard() {
           <Stack direction="row" alignItems="center" spacing={0}>
             <Button
               size="small"
-              onClick={() => setSlot('month')}
-              color={slot === 'month' ? 'primary' : 'secondary'}
-              variant={slot === 'month' ? 'outlined' : 'text'}
+              onClick={() => setSlot('all')}
+              color={slot === 'all' ? 'primary' : 'secondary'}
+              variant={slot === 'all' ? 'outlined' : 'text'}
             >
-              Month
+              Last 50 Days
+            </Button>
+
+            <Button
+              size="small"
+              onClick={() => setSlot('30')}
+              color={slot === '30' ? 'primary' : 'secondary'}
+              variant={slot === '30' ? 'outlined' : 'text'}
+            >
+              Last 30 Days
             </Button>
             <Button
               size="small"
-              onClick={() => setSlot('week')}
-              color={slot === 'week' ? 'primary' : 'secondary'}
-              variant={slot === 'week' ? 'outlined' : 'text'}
+              onClick={() => setSlot('15')}
+              color={slot === '15' ? 'primary' : 'secondary'}
+              variant={slot === '15' ? 'outlined' : 'text'}
             >
-              Week
+              Last 15 Days
             </Button>
           </Stack>
         </Grid>
       </Grid>
       <MainCard content={false} sx={{ mt: 1.5 }}>
         <Box sx={{ pt: 1, pr: 2 }}>
-          <IncomeAreaChart slot={slot} />
+          <IncomeAreaChart slot={slot} repositories={repositories} />
         </Box>
       </MainCard>
     </>

@@ -24,6 +24,52 @@ export const getDate = (data) => {
     throw new ValidationError(error.message);
   }
 };
+export const commitsAnalysis = (commits) => {
+  let totalCommits = commits.length;
+  let dateWiseCommitsCount = {};
+  let dateWiseContributorsCommitsCount = {};
+  let contributorsWiseCommitsCount = {};
+  for (let commit of commits) {
+    let committer = commit.commit.committer;
+    if (contributorsWiseCommitsCount[committer.name]) {
+      contributorsWiseCommitsCount[committer.name]++;
+    } else {
+      contributorsWiseCommitsCount[committer.name] = 1;
+    }
+    let date = getDate(committer.date);
+
+    if (dateWiseCommitsCount[date]) {
+      dateWiseCommitsCount[date]++;
+    } else {
+      dateWiseCommitsCount[date] = 1;
+    }
+    if (dateWiseContributorsCommitsCount[committer.name]) {
+      if (dateWiseContributorsCommitsCount[committer.name][date]) {
+        dateWiseContributorsCommitsCount[committer.name][date]++;
+      } else {
+        dateWiseContributorsCommitsCount[committer.name][date] = 1;
+      }
+    } else {
+      dateWiseContributorsCommitsCount[committer.name] = {};
+      dateWiseContributorsCommitsCount[committer.name][date] = 1;
+    }
+  }
+  let todayDate = getDate(new Date());
+
+  let todayCommitCount = dateWiseCommitsCount[todayDate] || 0;
+  let yesterDay = new Date();
+  yesterDay.setDate(yesterDay.getDate() - 1);
+  let yesterdayDate = getDate(yesterDay);
+  let yesterdayCommitCount = dateWiseCommitsCount[yesterdayDate] || 0;
+  return {
+    dateWiseCommitsCount,
+    contributorsWiseCommitsCount,
+    totalCommits,
+    todayCommitCount,
+    yesterdayCommitCount,
+    dateWiseContributorsCommitsCount,
+  };
+};
 
 // const getOTP = () => {
 //     return "213200";

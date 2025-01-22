@@ -6,6 +6,8 @@ import { useTheme } from '@mui/material/styles';
 
 // third-party
 import ReactApexChart from 'react-apexcharts';
+import { dataProcess } from 'utils/repositories';
+import { map } from 'lodash';
 
 // chart options
 const areaChartOptions = {
@@ -30,46 +32,44 @@ const areaChartOptions = {
 
 // ==============================|| INCOME AREA CHART ||============================== //
 
-export default function IncomeAreaChart({ slot }) {
+export default function IncomeAreaChart({ slot, repositories }) {
   const theme = useTheme();
 
   const { primary, secondary } = theme.palette.text;
   const line = theme.palette.divider;
-
+  const [data, setData] = useState(dataProcess(45, repositories))
   const [options, setOptions] = useState(areaChartOptions);
 
+  const [series, setSeries] = useState([
+    {
+      name: 'All',
+      data: Object.values(data.dateWise)
+    }
+  ]);
+
   useEffect(() => {
+    let colors = [];
+    // Dynamically generate colors based on contributors
+    colors.push(`#${Math.floor(Math.random()*255*255*255).toString(16)}`);
+    Object.keys(data.dateWiseContributorsCommitsCount).forEach((contributor, index) => {
+      colors.push(`#${Math.floor(Math.random()*255*255*255).toString(16)}`);
+    });
+    console.log(colors)
     setOptions((prevState) => ({
       ...prevState,
-      colors: [theme.palette.primary.main, theme.palette.primary[700]],
+      colors: colors, // Apply the dynamic colors array
       xaxis: {
-        categories:
-          slot === 'month'
-            ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-            : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        categories: Object.keys(data.dateWise),
         labels: {
           style: {
-            colors: [
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary
-            ]
+            colors: Object.keys(data.dateWise).map(() => secondary) // Repeat `secondary` for each category
           }
         },
         axisBorder: {
           show: true,
           color: line
         },
-        tickAmount: slot === 'month' ? 11 : 7
+        tickAmount: Object.keys(data.dateWise).length
       },
       yaxis: {
         labels: {
@@ -82,31 +82,33 @@ export default function IncomeAreaChart({ slot }) {
         borderColor: line
       }
     }));
-  }, [primary, secondary, line, theme, slot]);
+  }, [primary, secondary, line, theme, slot, data]);
 
-  const [series, setSeries] = useState([
-    {
-      name: 'Page Views',
-      data: [0, 86, 28, 115, 48, 210, 136]
-    },
-    {
-      name: 'Sessions',
-      data: [0, 43, 14, 56, 24, 105, 68]
-    }
-  ]);
 
   useEffect(() => {
+
+    let contributors = []
+    for (let contributor of Object.keys(data.dateWiseContributorsCommitsCount)) {
+      contributors.push({
+        name: contributor,
+        data: Object.values(data.dateWiseContributorsCommitsCount[contributor])
+      })
+    }
+
     setSeries([
       {
-        name: 'Page Views',
-        data: slot === 'month' ? [76, 85, 101, 98, 87, 105, 91, 114, 94, 86, 115, 35] : [31, 40, 28, 51, 42, 109, 100]
+        name: 'ALL',
+        data: Object.values(data.dateWise)
       },
-      {
-        name: 'Sessions',
-        data: slot === 'month' ? [110, 60, 150, 35, 60, 36, 26, 45, 65, 52, 53, 41] : [11, 32, 45, 32, 34, 52, 41]
-      }
+      ...contributors
+
     ]);
-  }, [slot]);
+  }, [slot,
+    data
+  ]);
+  useEffect(() => {
+    setData(dataProcess(slot != "all" ? parseInt(slot) : 45, repositories))
+  }, [slot])
 
   return <ReactApexChart options={options} series={series} type="area" height={450} />;
 }

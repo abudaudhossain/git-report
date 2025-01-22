@@ -62,7 +62,7 @@ export default function DashboardDefault() {
   useEffect(() => {
     getRepositoriesDetails(setRepositories, params.id, {
       headers: {
-        authorization: `bearer ${user.accessToken}`
+        authorization: `bearer ${user?.accessToken}`
       }
     })
   }, [user])
@@ -91,7 +91,7 @@ export default function DashboardDefault() {
 
       {/* row 2 */}
       <Grid item xs={12} md={7} lg={8}>
-        <UniqueVisitorCard />
+        <UniqueVisitorCard repositories={repositories} />
       </Grid>
       <Grid item xs={12} md={5} lg={4}>
         <Grid container alignItems="center" justifyContent="space-between">
@@ -106,10 +106,10 @@ export default function DashboardDefault() {
               <ListItemText primary="Fork" />
               <Typography variant="h5">{repositories.forkCount}</Typography>
             </ListItemButton>
-            <ListItemButton divider>
+            {/* <ListItemButton divider>
               <ListItemText primary="Stars" />
               <Typography variant="h5">58</Typography>
-            </ListItemButton>
+            </ListItemButton> */}
             <ListItemButton>
               <ListItemText primary="Watch" />
               <Typography variant="h5">{repositories.watchCount}</Typography>

@@ -3,8 +3,10 @@ import { getData } from "../helpers/api/repo.api.js";
 import { repositoryDB } from "../services/db/repoDB.js";
 import { getAPI, postAPI } from "../services/api/axios.js";
 import { getGithubAppAccessToken } from "../../../utils/helpers.js";
-import { getDate } from "../helpers/utility.js";
+import { commitsAnalysis, getDate } from "../helpers/utility.js";
+import { getAllCommits } from "../helpers/api/commits.js";
 
+console.log(getGithubAppAccessToken());
 class repositoriesController {
   async selectedRepositoriesHandler(req, res, next) {
     const { generatedReport } = req.query;
@@ -47,55 +49,13 @@ class repositoriesController {
           Authorization: `Bearer ${response.data.token}`,
         },
       });
-      let commitsResponse = await getAPI(
-        `/repos/${user.username}/${name}/commits`,
-        {
-          headers: {
-            Authorization: `Bearer ${response.data.token}`,
-          },
-        }
+
+      let commits = await getAllCommits(
+        user.username,
+        name,
+        response.data.token
       );
-      console.log(response.data.token);
-      let commits = commitsResponse.data;
-      let totalCommits = commits.length;
-      let dateWiseCommitsCount = {};
-      let contributorsWiseCommitsCount = {};
-
-      for (let commit of commits) {
-        let committer = commit.commit.committer;
-
-        if (contributorsWiseCommitsCount[committer.name]) {
-          contributorsWiseCommitsCount[committer.name].count++;
-        } else {
-          contributorsWiseCommitsCount[committer.name] = {
-            name: committer.name,
-            count: 1,
-          };
-        }
-        let date = getDate(committer.date);
-
-        if (dateWiseCommitsCount[date]) {
-          dateWiseCommitsCount[date].count++;
-        } else {
-          dateWiseCommitsCount[date] = {
-            date: date,
-            count: 1,
-          };
-        }
-
-        console.log(
-          "commit: ",
-          dateWiseCommitsCount,
-          contributorsWiseCommitsCount
-        );
-      }
-      let todayDate = getDate(new Date());
-
-      let todayCommitCount = dateWiseCommitsCount[todayDate] || 0;
-      let yesterDay = new Date();
-      yesterDay.setDate(yesterDay.getDate() - 1);
-      let yesterdayDate = getDate(yesterDay);
-      let yesterdayCommitCount = dateWiseCommitsCount[yesterdayDate] || 0;
+      let commitsAnalysisData =await commitsAnalysis(commits);
 
       let contributors = await getAPI(
         `/repos/${user.username}/${name}/contributors`,
@@ -105,6 +65,7 @@ class repositoriesController {
           },
         }
       );
+     
       let totalContributors = contributors.data.length;
 
       let issues = await getAPI(
@@ -132,13 +93,6 @@ class repositoriesController {
         name: repository.data.name,
         fullName: repository.data.full_name,
         description: repository.data.description,
-        todayCommitCount,
-        yesterdayCommitCount,
-        totalCommits,
-        contributorsWiseCommitsCount: Object.values(
-          contributorsWiseCommitsCount
-        ),
-        dateWiseCommitsCount: Object.values(dateWiseCommitsCount),
         totalContributors,
         totalIssues,
         openIssuesCount,
@@ -146,6 +100,7 @@ class repositoriesController {
         watchCount,
         forkCount,
         pullRequestCount: pulls?.data?.length || 0,
+        ...commitsAnalysisData
       });
     } catch (error) {
       res.send(error);

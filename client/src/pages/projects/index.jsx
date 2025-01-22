@@ -15,7 +15,7 @@ const Project = () => {
   useEffect(() => {
     getRepositories(setRepositories, {
       headers: {
-        authorization: `bearer ${user.accessToken}`
+        authorization: `bearer ${user?.accessToken}`
       }
     })
   }, [user])
